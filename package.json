@@ -1,0 +1,24 @@
+{
+  "name": "silver-octo-nodejsback",
+  "version": "1.0.0",
+  "description": "backend of silver-octo",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arshiaKalkho/silver-octo-NodeJSBack.git"
+  },
+  "author": "arshia a kalkhroani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arshiaKalkho/silver-octo-NodeJSBack/issues"
+  },
+  "homepage": "https://github.com/arshiaKalkho/silver-octo-NodeJSBack#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  }
+}
