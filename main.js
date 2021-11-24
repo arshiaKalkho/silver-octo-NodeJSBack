@@ -13,6 +13,8 @@ app.get("/", (req, res)=>{
     res.send("OK")
 })
 
-
-app.listen(port)
-console.log(`listening on port ${port}`)
+try{
+    app.listen(port,()=>{
+        console.log(`listening on port ${port}`)
+    })
+}catch(err){console.log(err)}
