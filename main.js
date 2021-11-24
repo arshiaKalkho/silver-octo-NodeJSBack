@@ -24,13 +24,14 @@ const dbConnection = mysql.createConnection({
 
 app.get("/", (req, res)=>{
     
-    dbConnection.query('SELECT * FROM product', (error, rows)=>{
+    dbConnection.query('SELECT * FROM products', (error, rows)=>{
         if(error){
-        res.status(500) 
-        res.send(error)
+            res.status(500) 
+            res.send(error)
+            throw(error)
+            
         }else{
             res.send(rows)
-    
         }
     })
    

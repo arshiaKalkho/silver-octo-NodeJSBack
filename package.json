@@ -4,8 +4,8 @@
   "description": "backend of silver-octo",
   "main": "main.js",
   "scripts": {
-    "devStart": "nodemon server.js",
-    "start": "node server.js"
+    "devStart": "nodemon main.js",
+    "start": "node main.js"
   },
   "repository": {
     "type": "git",
