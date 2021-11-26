@@ -20,40 +20,101 @@ const dbConnection = mysql.createConnection({
     database: dbConnectionSring.path[0]
 })
 
-const SQLquarryBuilder=(filterObj)=>{
-    const filterBool = filterObj.filterBool;
-    const search = filterObj.search;
-    const saleBool = filterObj.saleBool;
-    const order = filterObj.order;
-    const department = filterObj.department;
-    const minPrice = filterObj.minPrice;
-    const maxPrice = filterObj.maxPrice;
+
+
+
+const DBqueryGenerator = (isFilterOn, searchFor,  isOnSale, department, minPrice, MaxPrice, orderBy, perPage = 32)=>{
     
-    var baseQuary = ' SELECT * FROM products '
+    baseQuary = 'SELECT * FROM products '; 
+    andCounter = 0;//doing some math to see if we should put AND before conditions below, every additiong will add 1
+    if(isFilterOn === true){
+        if(searchFor || isOnSale || department || minPrice || MaxPrice){// only one "where" clause is needed, and its only needed if at least one of the following is ture
+            baseQuary = baseQuary + "WHERE ";
+            if(searchFor){
+                baseQuary = baseQuary + `PRODUCT_NAME = '${searchFor}' `;
+                andCounter++;
+            }
+            if(isOnSale){
+                if(andCounter > 0){
+                    baseQuary = baseQuary+ "AND "
+                }
+                baseQuary = baseQuary+ `PRODUCT_SALE_PRICE IS NOT NULL `;
+                andCounter++;
+                
+            }
+            if(department){
+                if(andCounter > 0){
+                    baseQuary = baseQuary + "AND "
+                }
+                baseQuary = baseQuary + `DEPARTMENT = '${department}' `;
+                andCounter++;
+            }
+            if(minPrice){
+                if(andCounter > 0){
+                    baseQuary = baseQuary + "AND "
+                }
+                baseQuary = baseQuary + `PRODUCT_PRICE >= '${minPrice}' `;
+                andCounter++;
+            }
+            if(MaxPrice){
+                if(andCounter > 0){
+                    baseQuary = baseQuary + "AND "
+                }
+                baseQuary = baseQuary + `PRODUCT_NAME =< '${MaxPrice}' `;
+                andCounter++;
+            }
+        
+        }
 
-    if(!filterBool) return baseQuary;
 
-
-
+        if(orderBy){
+            if(orderBy === "HL" || orderBy === "LH"){//price high low and low high
+                if( orderBy === "LH"){
+                    baseQuary= baseQuary + `ORDER BY PRODUCT_PRICE ASC `;
+                }else{
+                    baseQuary= baseQuary + `ORDER BY PRODUCT_PRICE DESC `;
+                }
+            }
+            if(orderBy === "AZ" || orderBy === "ZA"){//name a-z and z-a
+                if(orderBy === "AZ"){
+                    baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  ASC `;
+                }else{
+                    baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  DESC `;
+                }
+            }
+        }
+        
+        baseQuary= baseQuary + `LIMIT  ${perPage} ;`;
+        
+        
+    }
+    return baseQuary;
+    
 }
 
-
-
+//query builder instructions
+//isFilterOn, searchFor,  isOnSale, department, minPrice, MaxPrice, orderBy, perPage = 32
+//{"isFilterOn":"true", "searchFor":"Hammer",  "isOnSale":"false", "department":"false", "minPrice":"false", "MaxPrice":"false", "orderBy":"false"}
 
 app.get("/:filter", (req, res)=>{
     
-    console.log(JSON.parse(req.params.filter).name)
-    dbConnection.query(' SELECT * FROM products ', (error, rows)=>{
-        if(error){
-            res.status(500) 
-            res.send(error)      
-        }else{
-            res.status(200)
-            res.send(rows)
-        }
-    })
-})
+    var filter = req.params.filter
+    filter = JSON.parse(filter)
+    console.log(filter)
+    
 
+    res.send(DBqueryGenerator(filter.isFilterOn, filter.searchFor, filter.isOnSale, filter.department, filter.minPrice, filter.MaxPrice, filter.orderBy))
+    // dbConnection.query(requestFilteredDataFromDB(filter.isFilterOn, filter.searchFor, filter.isOnSale, filter.department, filter.minPrice, filter.MaxPrice, filter.orderBy), (error, rows)=>{
+    //     if(error){
+    //         res.status(500) 
+    //         res.send(error)      
+    //     }else{
+    //         res.status(200)
+    //         res.send(rows)
+            
+    //     }
+    // })
+})
 
 
 
