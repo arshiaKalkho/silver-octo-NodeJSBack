@@ -23,7 +23,16 @@ const dbConnection = mysql.createConnection({
 
 
 
-const DBqueryGenerator = (isFilterOn, searchFor,  isOnSale, department, minPrice, MaxPrice, orderBy, perPage = 32)=>{
+const DBqueryGenerator = (filter)=>{
+    
+    const isFilterOn = filter.isFilterOn
+    const searchFor = filter.searchFor
+    const isOnSale = filter.isOnSale
+    const department = filter.department
+    const minPrice = filter.minPrice
+    const MaxPrice = filter.MaxPrice 
+    const orderBy = filter.orderBy
+    const perPage = filter.perPage || 32;
     
     baseQuary = 'SELECT * FROM products '; 
     andCounter = 0;//doing some math to see if we should put AND before conditions below, every additiong will add 1
@@ -68,21 +77,20 @@ const DBqueryGenerator = (isFilterOn, searchFor,  isOnSale, department, minPrice
 
 
         if(orderBy){
-            if(orderBy === "HL" || orderBy === "LH"){//price high low and low high
-                if( orderBy === "LH"){
-                    baseQuary= baseQuary + `ORDER BY PRODUCT_PRICE ASC `;
-                }else{
-                    baseQuary= baseQuary + `ORDER BY PRODUCT_PRICE DESC `;
-                }
+            if(orderBy === "LH"){//price high low and low high
+                baseQuary= baseQuary + `ORDER BY PRODUCT_PRICE ASC `;
             }
-            if(orderBy === "AZ" || orderBy === "ZA"){//name a-z and z-a
-                if(orderBy === "AZ"){
-                    baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  ASC `;
-                }else{
-                    baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  DESC `;
-                }
+            if(orderBy === "HL"){//price high low and low high
+                baseQuary= baseQuary + `ORDER BY PRODUCT_PRICE DESC `;
+            }            
+            if(orderBy === "AZ"){//name a-z and z-a
+                baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  ASC `;
+            }
+            if(orderBy === "ZA"){//name a-z and z-a
+                baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  DESC `;
             }
         }
+        console.log(perPage)
         
         baseQuary= baseQuary + `LIMIT  ${perPage} ;`;
         
@@ -94,7 +102,7 @@ const DBqueryGenerator = (isFilterOn, searchFor,  isOnSale, department, minPrice
 
 //query builder instructions
 //isFilterOn, searchFor,  isOnSale, department, minPrice, MaxPrice, orderBy, perPage = 32
-//the correct format in this context with json url params, DON'T PUT SPACES in the json object
+//the correct format in this context with json url params, DON'T PUT SPACES in the json object at the url
 //{"isFilterOn":true,"searchFor":false,"isOnSale":false,"department":"Toys","minPrice":3,"MaxPrice":34,"orderBy":false}
 
 
@@ -102,7 +110,7 @@ app.get("/:filter", (req, res)=>{
         
     let filter = JSON.parse(req.params.filter)
 
-    dbConnection.query(DBqueryGenerator(filter.isFilterOn, filter.searchFor, filter.isOnSale, filter.department, filter.minPrice, filter.MaxPrice, filter.orderBy), (error, rows)=>{
+    dbConnection.query(DBqueryGenerator(filter), (error, rows)=>{
         if(error){
             res.status(500) 
             res.send(error)      
