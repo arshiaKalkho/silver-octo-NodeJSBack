@@ -60,7 +60,7 @@ const DBqueryGenerator = (isFilterOn, searchFor,  isOnSale, department, minPrice
                 if(andCounter > 0){
                     baseQuary = baseQuary + "AND "
                 }
-                baseQuary = baseQuary + `PRODUCT_PRICE =< '${MaxPrice}' `;
+                baseQuary = baseQuary + `PRODUCT_PRICE <= '${MaxPrice}' `;
                 andCounter++;
             }
         
@@ -99,15 +99,9 @@ const DBqueryGenerator = (isFilterOn, searchFor,  isOnSale, department, minPrice
 
 
 app.get("/:filter", (req, res)=>{
-    
-    
+        
     let filter = JSON.parse(req.params.filter)
-    
-    
-    
-    
 
-    
     dbConnection.query(DBqueryGenerator(filter.isFilterOn, filter.searchFor, filter.isOnSale, filter.department, filter.minPrice, filter.MaxPrice, filter.orderBy), (error, rows)=>{
         if(error){
             res.status(500) 
@@ -119,13 +113,6 @@ app.get("/:filter", (req, res)=>{
         }
     })
 })
-
-
-
-
-
-
-
 
 app.listen(port,()=>{
     console.log(`listening on port ${port}`)
