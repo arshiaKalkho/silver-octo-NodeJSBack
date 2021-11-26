@@ -90,7 +90,7 @@ const DBqueryGenerator = (filter)=>{
                 baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  DESC `;
             }
         }
-        console.log(perPage)
+        
         
         baseQuary= baseQuary + `LIMIT  ${perPage} ;`;
         
@@ -103,7 +103,7 @@ const DBqueryGenerator = (filter)=>{
 //query builder instructions
 //isFilterOn, searchFor,  isOnSale, department, minPrice, MaxPrice, orderBy, perPage = 32
 //the correct format in this context with json url params, DON'T PUT SPACES in the json object at the url
-//{"isFilterOn":true,"searchFor":false,"isOnSale":false,"department":"Toys","minPrice":3,"MaxPrice":34,"orderBy":false}
+//{"isFilterOn":true,"searchFor":false,"isOnSale":false,"department":"Toys","minPrice":3,"MaxPrice":34,"orderBy":false,"perPage":12}
 
 
 app.get("/:filter", (req, res)=>{
