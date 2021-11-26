@@ -60,7 +60,7 @@ const DBqueryGenerator = (isFilterOn, searchFor,  isOnSale, department, minPrice
                 if(andCounter > 0){
                     baseQuary = baseQuary + "AND "
                 }
-                baseQuary = baseQuary + `PRODUCT_NAME =< '${MaxPrice}' `;
+                baseQuary = baseQuary + `PRODUCT_PRICE =< '${MaxPrice}' `;
                 andCounter++;
             }
         
@@ -94,26 +94,30 @@ const DBqueryGenerator = (isFilterOn, searchFor,  isOnSale, department, minPrice
 
 //query builder instructions
 //isFilterOn, searchFor,  isOnSale, department, minPrice, MaxPrice, orderBy, perPage = 32
-//{"isFilterOn":"true", "searchFor":"Hammer",  "isOnSale":"false", "department":"false", "minPrice":"false", "MaxPrice":"false", "orderBy":"false"}
+//the correct format in this context with json url params, DON'T PUT SPACES in the json object
+//{"isFilterOn":true,"searchFor":false,"isOnSale":false,"department":"Toys","minPrice":3,"MaxPrice":34,"orderBy":false}
+
 
 app.get("/:filter", (req, res)=>{
     
-    var filter = req.params.filter
-    filter = JSON.parse(filter)
-    console.log(filter)
+    
+    let filter = JSON.parse(req.params.filter)
+    
+    
+    
     
 
-    res.send(DBqueryGenerator(filter.isFilterOn, filter.searchFor, filter.isOnSale, filter.department, filter.minPrice, filter.MaxPrice, filter.orderBy))
-    // dbConnection.query(requestFilteredDataFromDB(filter.isFilterOn, filter.searchFor, filter.isOnSale, filter.department, filter.minPrice, filter.MaxPrice, filter.orderBy), (error, rows)=>{
-    //     if(error){
-    //         res.status(500) 
-    //         res.send(error)      
-    //     }else{
-    //         res.status(200)
-    //         res.send(rows)
+    
+    dbConnection.query(DBqueryGenerator(filter.isFilterOn, filter.searchFor, filter.isOnSale, filter.department, filter.minPrice, filter.MaxPrice, filter.orderBy), (error, rows)=>{
+        if(error){
+            res.status(500) 
+            res.send(error)      
+        }else{
+            res.status(200)
+            res.send(rows)
             
-    //     }
-    // })
+        }
+    })
 })
 
 
