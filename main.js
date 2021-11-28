@@ -39,26 +39,25 @@ app.get("/products/:filter" , (req, res)=>{
     
     if(key == null)
         res.sendStatus(401)
-    else if(!bcrypt.compare( key , process.env.localPass))
-        res.sendStatus(401)
-    else{
+    else(!bcrypt.compare( key , process.env.localPass,(err,result)=>{
         
-        const dbConnection = mysql.createConnection(dbConnectionString)//connect
-
-        dbConnection.query(DBqueryGenerator(JSON.parse(req.params.filter)), (error, rows)=>{//get data
-            if(error){
-                res.status(500) 
-                res.send(error)      
-            }else{
-                res.status(200)
-                res.send(rows)
-                
-            }
-        })
-        
-        dbConnection.end()//close
-    }
-    
+        if(!result){
+            res.sendStatus(401)
+        }else{
+            const dbConnection = mysql.createConnection(dbConnectionString)//connect
+            dbConnection.query(DBqueryGenerator(JSON.parse(req.params.filter)), (error, rows)=>{//get data
+                if(error){
+                    res.status(500) 
+                    res.send(error)      
+                }else{
+                    res.status(200)
+                    res.send(rows)
+                    
+                }
+            })    
+            dbConnection.end()//close
+        }
+    })) 
 })
 
 
