@@ -31,7 +31,7 @@ const port = process.env.PORT || 8080;
 
 
 app.get("/" , (req, res)=>{
-    res.redirect("/products/{'key':null}")
+    res.redirect('/products/{"key":null}')
 })
 app.get("/products/:filter" , (req, res)=>{
     
