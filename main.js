@@ -48,7 +48,7 @@ app.get("/products/:filter" , (req, res)=>{
                 res.send(error)      
             }else{
                 res.status(200)
-                res.json(rows)
+                res.send(rows)
                 
             }
         })
