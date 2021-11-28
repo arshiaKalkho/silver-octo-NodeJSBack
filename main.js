@@ -30,6 +30,9 @@ const port = process.env.PORT || 8080;
 
 
 
+app.get("*" , (req, res)=>{
+    res.redirect("/products/{}")
+})
 app.get("/products/:filter" , (req, res)=>{
     
     const key = JSON.parse(req.params.filter).key;
