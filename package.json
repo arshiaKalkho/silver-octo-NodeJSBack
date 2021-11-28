@@ -22,7 +22,8 @@
     "connection-string": "^4.3.4",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "bcrypt": "^5.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.13"
