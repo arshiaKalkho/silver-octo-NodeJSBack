@@ -8,9 +8,17 @@ const app = express();
 const mysql = require("mysql")
 const {ConnectionString} = require('connection-string'); 
 const dbConnectionSring = new ConnectionString(process.env.CLEARDB_DATABASE_URL)
+const cors = require('cors')
 const DBqueryGenerator = require("./dataServices")
 
-const dbConnectionString = {
+
+
+
+
+
+app.use(cors())//enable corse policy
+
+const dbConnectionString = {//connection object created
     host: dbConnectionSring.hosts[0].name,
     user: dbConnectionSring.user,
     password: dbConnectionSring.password,
