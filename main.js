@@ -38,7 +38,7 @@ app.get("/products/:filter" , (req, res)=>{
     const key = JSON.parse(req.params.filter).key;
     
     if(key == null)
-        res.sendStatus(401)
+    res.sendStatus(401)
     else(!bcrypt.compare( key , process.env.localPass,(err,result)=>{
         
         if(!result){
@@ -61,6 +61,9 @@ app.get("/products/:filter" , (req, res)=>{
 })
 
 
+app.get("*" , (req, res)=>{
+    res.redirect('/products/{"key":null}')
+})
 app.listen(port,()=>{
     console.log(`listening on port ${port}`)
 })
