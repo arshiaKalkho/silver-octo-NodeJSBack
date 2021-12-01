@@ -9,7 +9,7 @@ module.exports = (filter)=>{
     const isOnSale = filter.isOnSale
     const department = filter.department
     const minPrice = filter.minPrice
-    const MaxPrice = filter.MaxPrice 
+    const MaxPrice = filter.maxPrice 
     const orderBy = filter.orderBy
     const perPage = filter.perPage || 32;
     
@@ -56,16 +56,16 @@ module.exports = (filter)=>{
 
 
         if(orderBy){
-            if(orderBy === "LH"){//price high low and low high
+            if(orderBy === "L-H"){//price high low and low high
                 baseQuary= baseQuary + `ORDER BY PRODUCT_PRICE ASC `;
             }
-            if(orderBy === "HL"){//price high low and low high
+            if(orderBy === "H-L"){//price high low and low high
                 baseQuary= baseQuary + `ORDER BY PRODUCT_PRICE DESC `;
             }            
-            if(orderBy === "AZ"){//name a-z and z-a
+            if(orderBy === "A-Z"){//name a-z and z-a
                 baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  ASC `;
             }
-            if(orderBy === "ZA"){//name a-z and z-a
+            if(orderBy === "Z-A"){//name a-z and z-a
                 baseQuary= baseQuary + `ORDER BY PRODUCT_NAME  DESC `;
             }
         }
