@@ -76,7 +76,7 @@ module.exports = (filter)=>{
         
         
     }
-    console.log(baseQuary)
+    
     return baseQuary;
     
 }
