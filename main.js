@@ -47,7 +47,7 @@ app.get("/products/:filter" , (req, res)=>{
     
     if(key == null)
     res.sendStatus(401)
-    else(!bcrypt.compare( key , process.env.localPass,(err,result)=>{
+    else{bcrypt.compare( key , process.env.localPass,(err,result)=>{
         
         if(!result){
             res.sendStatus(401)
@@ -65,7 +65,7 @@ app.get("/products/:filter" , (req, res)=>{
             })    
             dbConnection.end()//close
         }
-    })) 
+    })}
 })
 
 

@@ -11,7 +11,8 @@ module.exports = (filter)=>{
     const minPrice = filter.minPrice
     const MaxPrice = filter.maxPrice 
     const orderBy = filter.orderBy
-    const perPage = filter.perPage || 32;
+    const currentPage = filter.currentPage
+    const perPage = filter.perPage;
     
     baseQuary = 'SELECT * FROM products '; 
     andCounter = 0;//doing some math to see if we should put AND before conditions below, every additiong will add 1
@@ -71,10 +72,11 @@ module.exports = (filter)=>{
         }
         
         
-        baseQuary= baseQuary + `LIMIT  ${perPage} ;`;
+        baseQuary+= `LIMIT  ${perPage}  OFFSET ${(currentPage-1)*perPage};`;
         
         
     }
+    console.log(baseQuary)
     return baseQuary;
     
 }
