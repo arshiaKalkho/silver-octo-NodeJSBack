@@ -19,6 +19,7 @@ const DBqueryGenerator = require("./dataServices")
 app.use(cors())//enable corse policy
 
 const dbConnectionString = {//connection object created
+    connectionLimit : 8,
     host: dbConnectionSring.hosts[0].name,
     user: dbConnectionSring.user,
     password: dbConnectionSring.password,
@@ -45,7 +46,7 @@ app.get("/products/:filter" , (req, res)=>{
     
     const key = JSON.parse(req.params.filter).key;
     
-    if(key == null)
+    if(key === null)
     res.sendStatus(401)
     else{bcrypt.compare( key , process.env.localPass,(err,result)=>{
         
