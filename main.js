@@ -68,7 +68,36 @@ app.get("/products/:filter" , (req, res)=>{
         }
     })}
 })
-
+app.get("/product/:product", (req,res)=>{
+    const product = JSON.parse(req.params.product)
+    const id = product.id;
+    const key = product.key;
+    if(key === null){
+    
+    res.sendStatus(401)
+    }else{bcrypt.compare( key , process.env.localPass,(err,result)=>{
+        
+        if(!result){
+            
+            res.sendStatus(401)
+        }else{
+            const dbConnection = mysql.createConnection(dbConnectionString)//connect
+            dbConnection.query(`SELECT * FROM products WHERE PRODUCT_ID = ${id}`, (error, rows)=>{//get data
+                
+               
+                if(error){
+                    res.status(500) 
+                    res.send(error)      
+                }else{
+                    res.status(200)
+                    res.send(rows)   
+                }
+            }    
+            )
+            dbConnection.end()//close
+        }
+    })}
+})
 
 app.get("*" , (req, res)=>{
     res.redirect('/products/{"key":null}')
