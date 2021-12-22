@@ -2,7 +2,7 @@
 
 
 
-module.exports = (filter)=>{
+exports.requestProducts = (filter)=>{
     
     const isFilterOn = filter.isFilterOn
     const searchFor = filter.searchFor
