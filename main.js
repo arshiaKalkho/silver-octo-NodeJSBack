@@ -10,7 +10,10 @@ const {ConnectionString} = require('connection-string');
 const dbConnectionSring = new ConnectionString(process.env.CLEARDB_DATABASE_URL)
 const cors = require('cors')
 const DataServices = require("./dataServices")
+const jwt = require('jsonwebtoken')
 app.use(bodyParser.json());
+
+
 
 
 
@@ -27,7 +30,21 @@ const dbConnectionString = {//connection object created
 
 const port = process.env.PORT || 8080;
 
-
+const verifyJWT = (req,res,next)=>{
+    const token = req.header["x-access-token"];
+    if(!token){
+        res.false({auth:false})
+    }else{
+        jwt.verify(token, process.env.jwtSecret, (err, decoded)=>{
+            if(err){
+                res.json({auth:false})
+            }else{
+                req.userId = decoded.Id
+            }
+        })
+    }
+    next()
+}
 
 
 //query builder instructions
@@ -108,20 +125,20 @@ app.post('/login', (req,res)=>{
                 const dbConnection = mysql.createConnection(dbConnectionString)//connect
                 dbConnection.query(`SELECT * FROM customers WHERE username = '${req.body.username}'`, (error, row)=>{//get data
                     if(error){//internal error
-                        res.status(500) 
-                        res.send(error)  
+                        res.status(500).json({message:error}) 
+                        
                     }else if(!row[0]){//if user doesn't exist
-                        res.status(200)
-                        res.send("User Not Found")     
+                        res.status(200).json({message:"User not found"})
+                        
                     }else{//check if the password is correct
                         bcrypt.compare(req.body.password, row[0].password,(err,result)=>{
                             if(err){
                                 res.status(500)
                                 res.send(err)
                             }else if(!result){
-                                res.status(200).send("Password Incorrect")
+                                res.status(200).json({message:"Password Incorrect"})
                             }else{
-                                res.status(200).send("Correct Password")
+                                res.status(200).json({message:"Correct Password"})
                             }
                         })
                     }
@@ -131,7 +148,7 @@ app.post('/login', (req,res)=>{
             }
         })
     }else{
-        res.send(400)
+        res.send(403).json({message:"Missing parameters"})
     }
 })
 app.post('/register', (req,res)=>{
@@ -148,7 +165,7 @@ app.post('/register', (req,res)=>{
                 dbConnection.query(`SELECT * FROM customers WHERE username = '${req.body.username}'`,(error, row)=>{
                     
                     if(error){
-                        res.status(500).send('internal server error: DB-ERR')
+                        res.status(500).json({message:"internal server error : DB-ERR"})
                     }else if(!row[0]){//username not in use already
                         
                         const dbConnection = mysql.createConnection(dbConnectionString)//connect again for some reason, last query ends the connection somehow
@@ -156,7 +173,7 @@ app.post('/register', (req,res)=>{
                         dbConnection.query(`SELECT * FROM customers WHERE email = '${req.body.email}'`,(error, row)=>{
                             
                             if(error){
-                                res.status(500).send('internal server error : DB-ERR')
+                                res.status(500).json({message:"internal server error : DB-ERR"})
                             }else if(!row[0]){//email not in use already
                                 
                                 bcrypt.hash(req.body.password, 10,(err,hashedPass)=>{
@@ -166,40 +183,35 @@ app.post('/register', (req,res)=>{
                                             
                                             
                                             if(error){//error while writing to db
-                                                res.status(500).send('internal server error : DB-ERR')
+                                                res.status(500).json({message:'internal server error : DB-ERR'})
                                             }else{
-                                                res.sendStatus(201)//(created)success
+                                                res.status(201).json({message:"User created"})//(created)success
                                                 
                                             }
                                         })
                                         dbConnection.end()//close
                                     }else{
-                                        res.sendStatus(500)
+                                        res.status(500).json({message:'internal server error : DB-ERR'})
                                     }
                                 })                                
                                 
                             }else{
-                                res.status(409).send('email already in use')
+                                res.status(409).json({message:"Email already in use"})
                             }
                         })
                         
                         dbConnection.end()//close
                     }else{
-                        res.status(409).send('username already in use')
+                        res.status(409).json({message:"Username already in use"})
                         
                     }
                 })
-
-
-                
-                
-                
                 
                 dbConnection.end()//close
             }
         })
     }else{
-        res.send(403)//(forbidden)api key missing
+        res.status(403).json({message:"api key missing"})//(forbidden)api key missing
     }
     
 })
