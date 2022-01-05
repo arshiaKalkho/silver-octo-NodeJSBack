@@ -19,7 +19,7 @@ exports.requestProducts = (filter)=>{
     if(isFilterOn === true){
         if(searchFor || isOnSale || department || minPrice || MaxPrice){// only one "where" clause is needed, and its only needed if at least one of the following is ture
             baseQuary = baseQuary + "WHERE ";
-            if(searchFor){
+            if(searchFor){ //add %{$needle}%  intsead of '${searchFor}' and test so that user doesn't need to enter whole names 
                 baseQuary = baseQuary + `PRODUCT_NAME = '${searchFor}' `;
                 andCounter++;
             }
